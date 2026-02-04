@@ -45,8 +45,9 @@ export default function HomePage() {
           <nav className="hidden md:flex items-center space-x-8">
             <a href="#features" className="text-slate-300 hover:text-white transition">Features</a>
             <a href="#pricing" className="text-slate-300 hover:text-white transition">Pricing</a>
-            <a href="#waitlist" className="bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition font-medium">
-              Join Waitlist
+            <a href="/login" className="text-slate-300 hover:text-white transition">Login</a>
+            <a href="/signup" className="bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition font-medium">
+              Registrieren
             </a>
           </nav>
         </div>
