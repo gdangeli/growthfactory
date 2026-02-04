@@ -1,16 +1,37 @@
 'use client';
 
-import Link from 'next/link';
 import { useState } from 'react';
 
 export default function HomePage() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
 
-  const handleWaitlist = (e: React.FormEvent) => {
+  const handleWaitlist = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Save to database
-    setSubmitted(true);
+    setLoading(true);
+    
+    try {
+      const res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      
+      const data = await res.json();
+      
+      if (res.ok) {
+        setSubmitted(true);
+        setMessage(data.message);
+      } else {
+        setMessage(data.error || 'Fehler. Bitte versuche es nochmal.');
+      }
+    } catch {
+      setMessage('Netzwerk-Fehler. Bitte versuche es nochmal.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -62,15 +83,19 @@ export default function HomePage() {
                 />
                 <button
                   type="submit"
-                  className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-lg transition whitespace-nowrap"
+                  disabled={loading}
+                  className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-600/50 text-white font-semibold rounded-lg transition whitespace-nowrap"
                 >
-                  Auf Warteliste →
+                  {loading ? '...' : 'Auf Warteliste →'}
                 </button>
               </form>
             ) : (
               <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-6 py-4 rounded-lg">
-                ✅ Du bist auf der Warteliste! Wir melden uns bald.
+                ✅ {message || 'Du bist auf der Warteliste! Wir melden uns bald.'}
               </div>
+            )}
+            {message && !submitted && (
+              <div className="mt-3 text-red-400 text-sm">{message}</div>
             )}
             <p className="text-slate-500 text-sm mt-3">
               Kostenlos. Kein Spam. Früher Zugang garantiert.
